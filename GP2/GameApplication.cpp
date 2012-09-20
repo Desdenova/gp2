@@ -18,22 +18,31 @@ CGameApplication::CGameApplication(void)
 
 CGameApplication::~CGameApplication(void)
 {
- if (m_pD3D10Device)
+ if(m_pD3D10Device)
   m_pD3D10Device->ClearState();
 
- if (m_pVertexBuffer)
+ if(m_pVertexBuffer)
   m_pVertexBuffer->Release();
+
  if(m_pVertexLayout)
   m_pVertexLayout->Release();
 
  if(m_pEffect)
   m_pEffect->Release();
 
- if (m_pRenderTargetView)
+ if(m_pRenderTargetView)
   m_pRenderTargetView->Release();
+
+ if(m_pDepthStencilTexture)
+	 m_pDepthStencilTexture->Release();
+
+ if(m_pDepthStencilView)
+	 m_pDepthStencilView->Release();
+
  if (m_pSwapChain)
   m_pSwapChain->Release();
- if (m_pD3D10Device)
+
+ if(m_pD3D10Device)
   m_pD3D10Device->Release();
 
  if(m_pWindow)
@@ -65,14 +74,13 @@ bool CGameApplication::initGame()
 #if defined(DEBUG) || defined( _DEBUG)
  dwShaderFlags |= D3D10_SHADER_DEBUG;
 #endif
-
+ ID3D10Blob *pErrors = NULL;
  if(FAILED(D3DX10CreateEffectFromFile(TEXT("Transform.fx"),
   NULL, NULL, "fx_4_0", dwShaderFlags, 0,
   m_pD3D10Device, NULL, NULL, &m_pEffect,
   NULL, NULL)))
  {
-  MessageBox(NULL, TEXT("The FX file cannot be located. Please run this executable from the directory that contains the FX file."),
-   TEXT("Error"),
+  MessageBoxA(NULL,(char*)pErrors->GetBufferPointer(),"Error",
    MB_OK);
   return false;
  }
@@ -148,6 +156,7 @@ void CGameApplication::render()
 {
  float ClearColor[4] = {0.0f, 0.125f, 0.3f, 1.0f };
  m_pD3D10Device->ClearRenderTargetView( m_pRenderTargetView, ClearColor );
+ m_pD3D10Device->ClearDepthStencilView(m_pDepthStencilView, D3D10_CLEAR_DEPTH, 1.0f,0);
 
  D3D10_TECHNIQUE_DESC techDesc;
  m_pTechnique->GetDesc(&techDesc);

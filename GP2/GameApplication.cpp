@@ -70,73 +70,98 @@ bool CGameApplication::init()
 bool CGameApplication::initGame()
 {
 
- DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
-#if defined(DEBUG) || defined( _DEBUG)
- dwShaderFlags |= D3D10_SHADER_DEBUG;
-#endif
- ID3D10Blob *pErrors = NULL;
- if(FAILED(D3DX10CreateEffectFromFile(TEXT("Transform.fx"),
-  NULL, NULL, "fx_4_0", dwShaderFlags, 0,
-  m_pD3D10Device, NULL, NULL, &m_pEffect,
-  NULL, NULL)))
- {
-  MessageBoxA(NULL,(char*)pErrors->GetBufferPointer(),"Error",
-   MB_OK);
-  return false;
- }
+	 DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
+	#if defined(DEBUG) || defined( _DEBUG)
+	 dwShaderFlags |= D3D10_SHADER_DEBUG;
+	#endif
+	 ID3D10Blob *pErrors = NULL;
+	 if(FAILED(D3DX10CreateEffectFromFile(TEXT("Transform.fx"),
+	  NULL, NULL, "fx_4_0", dwShaderFlags, 0,
+	  m_pD3D10Device, NULL, NULL, &m_pEffect,
+	  NULL, NULL)))
+	 {
+	  MessageBoxA(NULL,(char*)pErrors->GetBufferPointer(),"Error",
+	   MB_OK);
+	  return false;
+	 }
 
- m_pTechnique=m_pEffect->GetTechniqueByName("Render");
+	 m_pTechnique=m_pEffect->GetTechniqueByName("Render");
 
- D3D10_BUFFER_DESC bd;
- bd.Usage = D3D10_USAGE_DEFAULT;
- bd.ByteWidth = sizeof( Vertex ) * 3;
- bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
- bd.CPUAccessFlags = 0;
- bd.MiscFlags = 0;
+	 D3D10_BUFFER_DESC bd;
+	 bd.Usage = D3D10_USAGE_DEFAULT;
+	 bd.ByteWidth = sizeof( Vertex ) * 3;
+	 bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+	 bd.CPUAccessFlags = 0;
+	 bd.MiscFlags = 0;
 
- Vertex vertices[]=
- {
-  D3DXVECTOR3( 0.0f, 0.5f, 0.5f),
-  D3DXVECTOR3( 0.5f, -0.5f, 0.5f),
-  D3DXVECTOR3( -0.5f, -0.5f, 0.5f),
- };
+	 Vertex vertices[]=
+	 {
+	  D3DXVECTOR3( 0.0f, 0.5f, 0.5f),
+	  D3DXVECTOR3( 0.5f, -0.5f, 0.5f),
+	  D3DXVECTOR3( -0.5f, -0.5f, 0.5f),
+	 };
 
- D3D10_SUBRESOURCE_DATA InitData;
- InitData.pSysMem = vertices;
+	 D3D10_SUBRESOURCE_DATA InitData;
+	 InitData.pSysMem = vertices;
 
- if (FAILED(m_pD3D10Device->CreateBuffer (&bd, &InitData,
-  &m_pVertexBuffer )))
-  return false;
+	 if (FAILED(m_pD3D10Device->CreateBuffer (&bd, &InitData,
+	  &m_pVertexBuffer )))
+	  return false;
 
- D3D10_INPUT_ELEMENT_DESC layout[] =
- {
-  {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,
-  D3D10_INPUT_PER_VERTEX_DATA, 0},
- };
+	 D3D10_INPUT_ELEMENT_DESC layout[] =
+	 {
+	  {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,
+	  D3D10_INPUT_PER_VERTEX_DATA, 0},
+	 };
 
- UINT numElements = sizeof(layout) /sizeof(D3D10_INPUT_ELEMENT_DESC);
- D3D10_PASS_DESC PassDesc;
- m_pTechnique->GetPassByIndex(0)->GetDesc(&PassDesc);
+	 UINT numElements = sizeof(layout) /sizeof(D3D10_INPUT_ELEMENT_DESC);
+	 D3D10_PASS_DESC PassDesc;
+	 m_pTechnique->GetPassByIndex(0)->GetDesc(&PassDesc);
 
- if(FAILED(m_pD3D10Device->CreateInputLayout(layout,
-  numElements,
-  PassDesc.pIAInputSignature,
-  PassDesc.IAInputSignatureSize,
-  &m_pVertexLayout )))
- {
-  return false;
- }
+	 if(FAILED(m_pD3D10Device->CreateInputLayout(layout,
+	  numElements,
+	  PassDesc.pIAInputSignature,
+	  PassDesc.IAInputSignatureSize,
+	  &m_pVertexLayout )))
+	 {
+	  return false;
+	 }
 
- m_pD3D10Device->IASetInputLayout(m_pVertexLayout);
+	 m_pD3D10Device->IASetInputLayout(m_pVertexLayout);
 
- UINT stride = sizeof(Vertex);
- UINT offset = 0;
- m_pD3D10Device->IASetVertexBuffers(0,1,
-  &m_pVertexBuffer, &stride, &offset);
+	 UINT stride = sizeof(Vertex);
+	 UINT offset = 0;
+	 m_pD3D10Device->IASetVertexBuffers(0,1,
+	  &m_pVertexBuffer, &stride, &offset);
 
- m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	 m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
- return true;
+	 D3DXVECTOR3 cameraPos(0.0f,0.0f,-10.0f);
+	 D3DXVECTOR3 cameraLook(0.0f,0.0f,1.0f);
+	 D3DXVECTOR3 cameraUp(0.0f,1.0f,0.0f);
+	 D3DXMatrixLookAtLH(&m_matView,&cameraPos,&cameraLook,&cameraUp);
+
+	 D3D10_VIEWPORT vp;
+	 UINT numViewPorts=1;
+	 m_pD3D10Device->RSGetViewports(&numViewPorts,&vp);
+
+	 D3DXMatrixPerspectiveFovLH(&m_matProjection, ( float )D3DX_PI*0.25f, vp.Width/( FLOAT )vp.Height, 0.1f, 100.0f);
+
+	 m_pViewMatrixVariable=m_pEffect->GetVariableByName("matView")->AsMatrix();
+	 m_pProjectionMatrixVariable=m_pEffect->GetVariableByName("matProjection")->AsMatrix();
+
+	 m_pProjectionMatrixVariable->SetMatrix((float*)m_matView);
+	 m_pWorldMatrixVariable->SetMatrix((float*)m_matWorld);
+	 D3D10_TECHNIQUE_DESC techDesc;
+	 m_pTechnique->GetDesc( &techDesc );
+
+	 m_vecPosition=D3DXVECTOR3(0.0f,0.0f,0.0f);
+	 m_vecScale=D3DXVECTOR3(1.0f,1.0f,1.0f);
+	 m_vecRotation=D3DXVECTOR3(0.0f,0.0f,0.0f);
+
+	 m_pWorldMatrixVariable=m_pEffect->GetVariableByName("matWorld")->AsMatrix();
+
+	 return true;
 }
 
 bool CGameApplication::run()
@@ -171,6 +196,12 @@ void CGameApplication::render()
 
 void CGameApplication::update()
 {
+	D3DXMatrixScaling(&m_matScale, m_vecScale.x, m_vecScale.y, m_vecScale.z);
+	D3DXMatrixRotationYawPitchRoll(&m_matRotation, m_vecRotation.x, m_vecRotation.y, m_vecRotation.z);
+	D3DXMatrixTranslation(&m_matTranslation, m_vecPosition.x, m_vecPosition.y, m_vecPosition.z);
+
+	D3DXMatrixMultiply(&m_matWorld, &m_matScale, &m_matRotation);
+	D3DXMatrixMultiply(&m_matWorld, &m_matWorld, &m_matTranslation);
 }
 
 bool CGameApplication::initGraphics()

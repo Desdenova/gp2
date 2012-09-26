@@ -4,7 +4,7 @@ float4x4 matProjection:PROJECTION;
 
 struct VS_INPUT
 {
-	float4 pos:POSITION
+	float4 pos:POSITION;
 };
 
 struct PS_INPUT
@@ -43,4 +43,3 @@ technique10 Render
 		SetRasterizerState(DisableCulling);
 	}
 }
-

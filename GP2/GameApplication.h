@@ -17,6 +17,9 @@ private:
  bool initGraphics();
  bool initWindow();
 
+ float size;
+ int timer;
+
  void render();
  void update();
 private:
@@ -31,6 +34,9 @@ private:
 
  ID3D10Buffer * m_pVertexBuffer;
  ID3D10InputLayout * m_pVertexLayout;
+
+ ID3D10ShaderResourceView * m_pDiffuseTexture;
+ ID3D10EffectShaderResourceVariable * m_pDiffuseTextureVariable;
 
  ID3D10Buffer * m_pIndexBuffer;
 

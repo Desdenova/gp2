@@ -46,7 +46,10 @@
     <None Include="ScreenSpace.fx">
       <Filter>Game\Effects</Filter>
     </None>
-    <None Include="Transform.fx">
+    <None Include="..\..\..\FX Composer Project\Transform\Transform.fx">
+      <Filter>Game\Effects</Filter>
+    </None>
+    <None Include="..\..\..\FX Composer Project\Transform\Texture.fx">
       <Filter>Game\Effects</Filter>
     </None>
   </ItemGroup>

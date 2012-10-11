@@ -202,7 +202,7 @@ bool CGameApplication::initGame()
 	m_vecRotation=D3DXVECTOR3(0.0f,0.0f,0.0f);
 	m_pWorldMatrixVariable=m_pEffect->GetVariableByName("matWorld")->AsMatrix();
 
-	if (FAILED(D3DX10CreateShaderResourceViewFromFile(m_pD3D10Device, TEXT("rockwall.jpg"), NULL, NULL, &m_pDiffuseTexture, NULL)))
+	if (FAILED(D3DX10CreateShaderResourceViewFromFile(m_pD3D10Device, TEXT("face.png"), NULL, NULL, &m_pDiffuseTexture, NULL)))
 	{
 		MessageBox(NULL, TEXT("Can't load texture"), TEXT("Error"), MB_OK);
 		return false;

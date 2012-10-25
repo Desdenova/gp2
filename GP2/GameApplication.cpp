@@ -202,7 +202,7 @@ bool CGameApplication::initGame()
 	m_vecRotation=D3DXVECTOR3(0.0f,0.0f,0.0f);
 	m_pWorldMatrixVariable=m_pEffect->GetVariableByName("matWorld")->AsMatrix();
 
-	if (FAILED(D3DX10CreateShaderResourceViewFromFile(m_pD3D10Device, TEXT("face.png"), NULL, NULL, &m_pDiffuseTexture, NULL)))
+	if (FAILED(D3DX10CreateShaderResourceViewFromFile(m_pD3D10Device, TEXT("rockwall.jpg"), NULL, NULL, &m_pDiffuseTexture, NULL)))
 	{
 		MessageBox(NULL, TEXT("Can't load texture"), TEXT("Error"), MB_OK);
 		return false;
@@ -249,16 +249,16 @@ void CGameApplication::update()
 {
 	D3DXMatrixScaling(&m_matScale,m_vecScale.x,m_vecScale.y,m_vecScale.z);
 
-	timer++;
-	if (timer > 5000)
+	/*timer++;
+	if (timer > 2500)
 	{
 		timer = 0;
 		size = -size;
-	}
+	}*/
 
-	m_vecScale.x+=size;
-	m_vecScale.y+=size;
-	m_vecScale.z+=size;
+	m_vecScale.x=m_vecScale.x+0.0001;
+	m_vecScale.y=m_vecScale.y+0.0001;
+	m_vecScale.z=m_vecScale.z+0.0001;
 	
 	m_vecRotation.x+=0.0001f;
 	m_vecRotation.y+=0.0001f;

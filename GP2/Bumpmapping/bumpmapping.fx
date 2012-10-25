@@ -54,6 +54,9 @@ bool useDiffuseMap = false;
 Texture2D specularMap;
 bool useSpecularMap = false;
 
+Texture2D bumpMap;
+bool useBumpMap = false;
+
 SamplerState wrapSampler
 {
     Filter = MIN_MAG_MIP_LINEAR;
@@ -67,6 +70,7 @@ struct VS_INPUT
 	float4 pos:POSITION;
 	float4 colour:COLOR;
 	float3 normal:NORMAL;
+	float3 tangent:TANGENT;
 	float2 texCoord:TEXCOORD0;
 };
 
@@ -76,7 +80,8 @@ struct PS_INPUT
 	float4 colour:COLOR;
 	float3 normal:NORMAL;
 	float2 texCoord:TEXCOORD0;
-	float4 cameraDirection:VIEWDIR;
+	float3 cameraDirection:VIEWDIR;
+	float3 lightDir:LIGHTDIR;
 };
 
 PS_INPUT VS(VS_INPUT input)
@@ -89,9 +94,27 @@ PS_INPUT VS(VS_INPUT input)
 	float4x4 matViewProjection = mul(matView,matProjection);
 	float4x4 matWorldViewProjection = mul(matWorld,matViewProjection);
 	
+	float worldPos = mul(input.pos,matWorld);
+	
+	if(useBumpMap == true)
+	{	
+		float3x3 worldToTangent;
+		worldToTangent[0] = mul(input.tangent, matWorld);
+		worldToTangent[1] = mul(cross(input.tangent,input.normal),matWorld);
+		worldToTangent[2] = mul(input.normal, matWorld);
+		
+		output.normal = normalize(mul(input.normal,worldToTangent));
+		output.cameraDirection = mul(normalize(cameraPosition-worldPos),worldToTangent);
+		output.lightDir = mul(lightDirection,worldToTangent);
+	}
+	else
+	{
+		output.normal = normalize(mul(input.normal,matWorld));
+		output.cameraDirection = mul(normalize(cameraPosition-worldPos),matWorld);
+		output.lightDir = lightDirection;
+	};
+	
 	output.pos = mul(input.pos,matWorldViewProjection);
-	float4 worldPos = mul(input.pos,matWorld);
-	output.cameraDirection = normalize(cameraPosition-worldPos);
 	
 	output.texCoord = input.texCoord;
 	
@@ -102,6 +125,7 @@ float4 PS(PS_INPUT input):SV_TARGET
 {
 	float4 diffuseColour = diffuseMaterial;
 	float4 specularColour = specularMaterial;
+	float3 normal = input.normal;
 	
 	if(useDiffuseMap == true)
 	{
@@ -113,10 +137,15 @@ float4 PS(PS_INPUT input):SV_TARGET
 		specularColour = specularMap.Sample(wrapSampler,input.texCoord);
 	};
 	
-	float3 normal = normalize(input.normal);
+	if(useBumpMap == true)
+	{
+		normal = normalize((2*(bumpMap.Sample(wrapSampler,input.texCoord)))-1.0);
+	};
+	
+	normal = normalize(input.normal);
 	float4 lightDir = -normalize(lightDirection);
 	float diffuse = saturate(dot(normal,lightDir));
-	float4 halfVec = normalize(lightDir+input.cameraDirection);
+	float3 halfVec = normalize(lightDir+input.cameraDirection);
 	float specular = pow(saturate(dot(normal,halfVec)),25);
 	return (ambientMaterial*ambientLightColour)+
 			(diffuseColour*diffuseLightColour*diffuse)+

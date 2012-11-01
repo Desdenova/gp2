@@ -20,23 +20,21 @@ PS_INPUT VS(VS_INPUT input)
 {
 	PS_INPUT output=(PS_INPUT)0;
 	
-	output.colour=input.colour;
-	output.texCoord=input.texCoord;
-	
 	float4x4 matViewProjection=mul(matView,matProjection);
 	float4x4 matWorldViewProjection=mul(matWorld,matViewProjection);
 	
 	output.pos=mul(input.pos,matWorldViewProjection);
+	output.colour=input.colour;
+	output.texCoord=input.texCoord;
 	return output;
 }
 
 Texture2D diffuseTexture;
-
 SamplerState diffuseSampler
 {
-	Filter = MIN_MAG_LINEAR_MIP_POINT;
-	AddressU = Wrap;
-	AddressV = Wrap;
+    Filter = MIN_MAG_LINEAR_MIP_POINT;
+    AddressU = Wrap;
+    AddressV = Wrap;
 };
 
 float4 PS(PS_INPUT input):SV_TARGET

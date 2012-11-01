@@ -1,41 +1,43 @@
 float4x4 matWorld:WORLD<string UIWidget="None";>;
 float4x4 matView:VIEW<string UIWidget="None";>;
 float4x4 matProjection:PROJECTION<string UIWidget="None";>;
-float4 ambientMaterial
+
+float4 ambientMaterialColour
 <
 	string UIName="Ambient Material";
 	string UIWidget="Color";
 >;
 float4 ambientLightColour
 <
-	string UIName="Ambient Luigi Colour";
-	string UIWidget="Color";
+	string UIName="Ambient Light Colour";
+	string UIWidget="Color";	
 >;
-float4 lightDirection:DIRECTION
-<
-	string Object="DirectionalLight";
->;
-float4 diffuseMaterial
+
+float4 diffuseMaterialColour
 <
 	string UIName="Diffuse Material";
-	string UIWidget="Color";
+	string UIWidget="Color";	
 >;
-float4 diffuseLightColour:DIFFUSE
-<
-	string Object="DiffuseLight";
+
+float4 diffuseLightColour:DIFFUSE<
+	string Object = "DirectionalLight";
+	string UIWidget="None";
+>;
+
+float4 lightDirection:DIRECTION<
+	string Object = "DirectionalLight";
+	string UIWidget="None";
 >;
 
 struct VS_INPUT
 {
 	float4 pos:POSITION;
-	float4 colour:COLOR;
 	float3 normal:NORMAL;
 };
 
 struct PS_INPUT
 {
 	float4 pos:SV_POSITION;
-	float4 colour:COLOR;
 	float3 normal:NORMAL;
 };
 
@@ -43,23 +45,23 @@ PS_INPUT VS(VS_INPUT input)
 {
 	PS_INPUT output=(PS_INPUT)0;
 	
-	output.colour=input.colour;
-	output.normal=mul(input.normal,matWorld);
-	
 	float4x4 matViewProjection=mul(matView,matProjection);
 	float4x4 matWorldViewProjection=mul(matWorld,matViewProjection);
 	
 	output.pos=mul(input.pos,matWorldViewProjection);
+	output.normal=mul(input.normal,matWorld);
 	return output;
 }
 
 float4 PS(PS_INPUT input):SV_TARGET
 {
 	float3 normal=normalize(input.normal);
-	float4 lightDir=-normalize(lightDirection);
+	float4 lightDir=normalize(lightDirection);
+	
 	float diffuse=saturate(dot(normal,lightDir));
-	return (ambientMaterial*ambientLightColour)+
-			(diffuseMaterial*diffuseLightColour*diffuse);
+	
+	return(ambientMaterialColour*ambientLightColour)+
+	(diffuseMaterialColour*diffuseLightColour*diffuse);
 }
 
 RasterizerState DisableCulling

@@ -88,6 +88,22 @@ bool CGameApplication::initGame()
 	pCameraGameObject->getTransform()->setPosition(0.0f,0.0f,-5.0f);
 	pCameraGameObject->setName("Camera");
 
+	CGameObject *pHumanGameObject=new CGameObject();
+	pHumanGameObject->setName("Human");
+	pHumanGameObject->getTransform()->setPosition(0.0f,-5.0f,10.0f);
+	pHumanGameObject->getTransform()->setScale(0.05f,0.05f,0.05f);
+	pHumanGameObject->getTransform()->setRotation(0.0f,0.0f,0.0f);
+	CMaterialComponent *pHumanMaterial=new CMaterialComponent();
+	pHumanMaterial->SetRenderingDevice(m_pD3D10Device);
+	pHumanMaterial->setEffectFilename("DirectionalLight.fx");
+	pHumanMaterial->setAmbientMaterialColour(D3DXCOLOR(0.5f,0.5f,0.0f,1.0f));
+	pHumanGameObject->addComponent(pHumanMaterial);
+
+	CMeshComponent *pHumanMesh=modelloader.loadModelFromFile(m_pD3D10Device,"humanoid.fbx");
+	pHumanMesh->SetRenderingDevice(m_pD3D10Device);
+	pHumanGameObject->addComponent(pHumanMesh);
+	m_pGameObjectManager->addGameObject(pHumanGameObject);
+
 	D3D10_VIEWPORT vp;
 	UINT numViewports=1;
 	m_pD3D10Device->RSGetViewports(&numViewports,&vp);
@@ -211,25 +227,25 @@ void CGameApplication::update()
 	if (CInput::getInstance().getKeyboard()->isKeyDown((int)'W'))
 	{
 		//play sound
-		CTransformComponent * pTransform=m_pGameObjectManager->findGameObject("Test")->getTransform();
+		CTransformComponent * pTransform=m_pGameObjectManager->findGameObject("Human")->getTransform();
 		pTransform->rotate(m_Timer.getElapsedTime(),0.0f,0.0f);
 	}
 	else if (CInput::getInstance().getKeyboard()->isKeyDown((int)'S'))
 	{
 		//play sound
-		CTransformComponent * pTransform=m_pGameObjectManager->findGameObject("Test")->getTransform();
+		CTransformComponent * pTransform=m_pGameObjectManager->findGameObject("Human")->getTransform();
 		pTransform->rotate(m_Timer.getElapsedTime()*-1,0.0f,0.0f);
 	}
 	if (CInput::getInstance().getKeyboard()->isKeyDown((int)'A'))
 	{
 		//play sound
-		CTransformComponent * pTransform=m_pGameObjectManager->findGameObject("Test")->getTransform();
+		CTransformComponent * pTransform=m_pGameObjectManager->findGameObject("Human")->getTransform();
 		pTransform->rotate(0.0f,m_Timer.getElapsedTime(),0.0f);
 	}
 	else if (CInput::getInstance().getKeyboard()->isKeyDown((int)'D'))
 	{
 		//play sound
-		CTransformComponent * pTransform=m_pGameObjectManager->findGameObject("Test")->getTransform();
+		CTransformComponent * pTransform=m_pGameObjectManager->findGameObject("Human")->getTransform();
 		pTransform->rotate(0.0f,m_Timer.getElapsedTime()*-1,0.0f);
 	}
 	m_pGameObjectManager->update(m_Timer.getElapsedTime());

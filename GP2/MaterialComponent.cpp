@@ -8,6 +8,9 @@ CMaterialComponent::CMaterialComponent()
 	m_pEffect=NULL;
 	m_pVertexLayout=NULL;
 	m_pDiffuseTexture=NULL;
+	m_pSpecularTexture=NULL;
+	m_pBumpTexture=NULL;
+	m_pHeightTexture=NULL;
 	m_EffectName="";
 	m_TechniqueName="Render";
 	ZeroMemory(&m_TechniqueDesc,sizeof(D3D10_TECHNIQUE_DESC));
@@ -26,6 +29,21 @@ CMaterialComponent::~CMaterialComponent()
 	{
 		m_pDiffuseTexture->Release();
 		m_pDiffuseTexture=NULL;
+	}
+	if (m_pSpecularTexture)
+	{
+		m_pSpecularTexture->Release();
+		m_pSpecularTexture=NULL;
+	}
+	if (m_pBumpTexture)
+	{
+		m_pBumpTexture->Release();
+		m_pBumpTexture=NULL;
+	}
+	if (m_pHeightTexture)
+	{
+		m_pHeightTexture->Release();
+		m_pHeightTexture=NULL;
 	}
 	//vertex layout
 	if (m_pVertexLayout)

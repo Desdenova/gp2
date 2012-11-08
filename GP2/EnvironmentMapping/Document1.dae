@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+	<asset>
+		<contributor>
+			<author>swilso60</author>
+			<authoring_tool>NVIDIA FX Composer 2.5</authoring_tool>
+			<comments/>
+			<copyright/>
+		</contributor>
+		<created>2012-11-08T09:21:27Z</created>
+		<keywords>FXComposer, NVIDIA</keywords>
+		<modified>2012-11-08T09:23:06Z</modified>
+		<subject/>
+		<title/>
+		<unit/>
+		<up_axis>Y_UP</up_axis>
+	</asset>
+	<library_visual_scenes>
+		<visual_scene id="DefaultScene" name="DefaultScene">
+			<node sid="__fxc_remove_node"/>
+			<extra type="evaluatescene_enables">
+				<technique profile="NVIDIA_FXCOMPOSER"/>
+			</extra>
+		</visual_scene>
+	</library_visual_scenes>
+	<library_effects>
+		<effect id="Effect" name="EnvironmentMapping">
+			<profile_COMMON>
+				<technique sid="__fxc_remove_profile_COMMON">
+					<constant/>
+				</technique>
+			</profile_COMMON>
+			<extra type="import">
+				<technique profile="NVIDIA_FXCOMPOSER">
+					<import url="../EnvironmentMapping.fx" compiler_options="" profile="fx"/>
+				</technique>
+			</extra>
+		</effect>
+	</library_effects>
+	<library_materials>
+		<material id="New_Effect" name="New_Effect_Material">
+			<instance_effect url="#Effect">
+				<technique_hint platform="PC-D3D" ref="main"/>
+				<setparam ref="WorldITXf">
+					<float4x4>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</float4x4>
+				</setparam>
+				<setparam ref="WvpXf">
+					<float4x4>2.07689 -1.57863e-007 -2.07689 7.41645e-007 -1.12165 2.24331 -1.12165 -2.99544e-008 -0.577386 -0.577386 -0.577385 22.2556 -0.57735 -0.57735 -0.57735 22.2572</float4x4>
+				</setparam>
+				<setparam ref="WorldXf">
+					<float4x4>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</float4x4>
+				</setparam>
+				<setparam ref="ViewIXf">
+					<float4x4>0.707107 -0.408248 0.57735 12.8502 -1.04555e-007 0.816496 0.57735 12.8502 -0.707107 -0.408248 0.57735 12.8502 -0 0 -0 1</float4x4>
+				</setparam>
+				<setparam ref="LightPos">
+					<float3>10 10 -10</float3>
+				</setparam>
+				<setparam ref="AmbiColor">
+					<float3>0.1 0.1 0.1</float3>
+				</setparam>
+				<setparam ref="SurfColor">
+					<float3>0.8 0.8 1</float3>
+				</setparam>
+				<setparam ref="Ks">
+					<float>0.5</float>
+				</setparam>
+				<setparam ref="SpecExpon">
+					<float>30</float>
+				</setparam>
+			</instance_effect>
+		</material>
+	</library_materials>
+	<scene>
+		<instance_visual_scene url="#DefaultScene"/>
+	</scene>
+</COLLADA>

@@ -73,6 +73,12 @@ bool CGameApplication::initGame()
 	CMaterialComponent *pMaterial=new CMaterialComponent();
 	pMaterial->SetRenderingDevice(m_pD3D10Device);
 	pMaterial->setEffectFilename("DirectionalLight.fx");
+
+	pMaterial->loadDiffuseTexture("armoredrecon_diff.png");
+	pMaterial->loadSpecularTexture("armoredrecon_spec.png");
+	pMaterial->loadBumpTexture("armoredrecon_N.png");
+	pMaterial->loadHeightTexture("armoredrecon_Height.png");
+
 	pMaterial->setAmbientMaterialColour(D3DXCOLOR(0.5f,0.5f,0.5f,1.0f));
 	pTestGameObject->addComponent(pMaterial);
 
@@ -248,6 +254,25 @@ void CGameApplication::update()
 		CTransformComponent * pTransform=m_pGameObjectManager->findGameObject("Test")->getTransform();
 		pTransform->rotate(0.0f,m_Timer.getElapsedTime()*-1,0.0f);
 	}
+
+	if (CInput::getInstance().getKeyboard()->isKeyDown(VK_UP))
+	{
+		//play sound
+		CTransformComponent * pTransform=m_pGameObjectManager->findGameObject("Test")->getTransform();
+		float yaw = pTransform->getRotation().y;
+		float pitch = pTransform->getRotation().x;
+		pTransform->translate(sin(yaw) * cos(pitch) * m_Timer.getElapsedTime() * 5, -sin(pitch)*m_Timer.getElapsedTime()*5, cos(yaw) * cos(pitch) * m_Timer.getElapsedTime() * 5  );
+	}
+
+	if (CInput::getInstance().getKeyboard()->isKeyDown(VK_DOWN))
+	{
+		//play sound
+		CTransformComponent * pTransform=m_pGameObjectManager->findGameObject("Test")->getTransform();
+		float yaw = pTransform->getRotation().y;
+		float pitch = pTransform->getRotation().x;
+		pTransform->translate(-sin(yaw) * cos(pitch) * m_Timer.getElapsedTime() * 5, sin(pitch)*m_Timer.getElapsedTime()*5, -cos(yaw) * cos(pitch) * m_Timer.getElapsedTime() * 5  );
+	}
+
 	m_pGameObjectManager->update(m_Timer.getElapsedTime());
 
 	
